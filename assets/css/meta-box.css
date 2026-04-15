@@ -1,0 +1,117 @@
+#psh-variation-select {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+#psh-variation-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2271b1;
+    margin: 3px 0 10px;
+    word-break: break-word;
+}
+
+#psh-history-container {
+    margin-top: 4px;
+}
+
+.psh-parent-notice {
+    font-size: 12px;
+    font-style: italic;
+    color: #757575;
+    margin: 0 0 10px;
+    padding: 6px 8px;
+    background: #f6f7f7;
+    border-left: 3px solid #c3c4c7;
+}
+
+.psh-loading,
+.psh-error {
+    color: #757575;
+    font-style: italic;
+    font-size: 13px;
+    margin: 0;
+}
+
+.psh-current-stock {
+    margin: 0 0 10px;
+    font-size: 13px;
+}
+
+.psh-no-history {
+    color: #757575;
+    font-style: italic;
+    font-size: 13px;
+    margin: 0;
+}
+
+/* Note list — mirrors WooCommerce order notes */
+.psh-notes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.psh-notes .psh-note {
+    margin: 0 0 8px;
+    padding: 8px 10px;
+    background: #d7cad2;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.psh-notes .psh-note-manual {
+    background: #f0f0f0;
+}
+
+.psh-note-text {
+    margin: 0;
+}
+
+#psh-stock-history .meta {
+    color: #757575;
+    font-size: 11px;
+    margin: -4px 0 10px;
+    padding: 0 0 10px;
+}
+
+.psh-note-text a {
+    text-decoration: none;
+}
+
+.psh-history-footer {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.psh-load-more {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #2271b1;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.psh-load-more:disabled {
+    color: #757575;
+    cursor: default;
+}
+
+.psh-clear-history {
+    margin-left: auto;
+    background: none;
+    border: none;
+    padding: 0;
+    color: #b32d2e;
+    font-size: 11px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.psh-clear-history:disabled {
+    color: #757575;
+    cursor: default;
+}
