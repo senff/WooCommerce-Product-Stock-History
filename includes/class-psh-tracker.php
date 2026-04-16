@@ -51,8 +51,25 @@ class PSH_Tracker {
 		// bypassing all WooCommerce hooks, so the failsafe can pick them up.
 		add_action( 'updated_post_meta', array( __CLASS__, 'on_stock_meta_updated' ), 10, 4 );
 
+		// Detect admin order-item edits (quantity changed on the order edit screen).
+		add_action( 'woocommerce_before_save_order_items', array( __CLASS__, 'on_before_save_order_items' ) );
+
 		// Remove history when a product or variation is permanently deleted.
 		add_action( 'before_delete_post', array( __CLASS__, 'on_product_deleted' ) );
+	}
+
+	// ------------------------------------------------------------------
+	// Order-item editing
+	// ------------------------------------------------------------------
+
+	/**
+	 * Fired before WooCommerce saves order items from the admin order edit screen.
+	 * Captures the order ID so subsequent stock changes can be attributed to it.
+	 *
+	 * @param int $order_id
+	 */
+	public static function on_before_save_order_items( int $order_id ): void {
+		self::$order_edit_id = $order_id;
 	}
 
 	// ------------------------------------------------------------------
@@ -199,14 +216,13 @@ class PSH_Tracker {
 			return;
 		}
 
-		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
-			$reason = 'api';
+		if ( null !== self::$order_edit_id ) {
+			PSH_DB::insert( $product_id, $old_stock, $new_stock, 'order_edit', self::$order_edit_id, null, '' );
+		} elseif ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			PSH_DB::insert( $product_id, $old_stock, $new_stock, 'api', null, get_current_user_id() ?: null, '' );
 		} else {
-			$reason = 'manual';
+			PSH_DB::insert( $product_id, $old_stock, $new_stock, 'manual', null, get_current_user_id() ?: null, '' );
 		}
-		$user_id = get_current_user_id() ?: null;
-
-		PSH_DB::insert( $product_id, $old_stock, $new_stock, $reason, null, $user_id, '' );
 
 		// Refresh snapshot so a second rapid save in the same request doesn't re-log.
 		self::set_snapshot( $product_id, $new_stock );
@@ -262,6 +278,9 @@ class PSH_Tracker {
 
 	/** @var bool True while on_order_stock_reduced / on_order_stock_restored is executing. */
 	private static bool $in_order_context = false;
+
+	/** @var int|null Order ID being edited via the admin order-items save, if any. */
+	private static ?int $order_edit_id = null;
 
 	/** @var array<int,float|null> Persisted stock captured before each save. */
 	private static array $snapshots = array();
@@ -357,6 +376,8 @@ class PSH_Tracker {
 			if ( '' !== self::$edit_context ) {
 				$user_id = get_current_user_id() ?: null;
 				PSH_DB::insert( $product_id, $last_logged, $current_stock, self::$edit_context, null, $user_id, '' );
+			} elseif ( null !== self::$order_edit_id ) {
+				PSH_DB::insert( $product_id, $last_logged, $current_stock, 'order_edit', self::$order_edit_id, null, '' );
 			} else {
 				PSH_DB::insert( $product_id, $last_logged, $current_stock, 'unknown', null, null, '' );
 			}

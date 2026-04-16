@@ -380,6 +380,15 @@ class PSH_Meta_Box {
 			case 'manual':
 				return esc_html__( 'manually adjusted', 'product-stock-history-for-woocommerce' );
 
+			case 'order_edit':
+				if ( $order_id ) {
+					$url  = get_edit_post_link( $order_id );
+					$link = $url ? '<a href="' . esc_url( $url ) . '">#' . $order_id . '</a>' : '#' . $order_id;
+					/* translators: %s: order link */
+					return sprintf( __( 'changed by editing order %s', 'product-stock-history-for-woocommerce' ), $link );
+				}
+				return esc_html__( 'changed by editing order', 'product-stock-history-for-woocommerce' );
+
 			case 'unknown':
 				return esc_html__( 'changed by unknown process (plugin or external service)', 'product-stock-history-for-woocommerce' );
 
